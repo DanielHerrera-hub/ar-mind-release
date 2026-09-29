@@ -31,7 +31,7 @@
     </div>
 
     <!-- Escena configurada con el archivo de rastreo -->
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; warmupTolerance: 1; missedTolerance: 10; filterMinCF: 0.0001;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
         <video id="video1" src="./lado_claro_2.mp4" preload="auto" loop="true" playsinline muted crossorigin="anonymous"></video>
         <video id="video2" src="./lado_oscuro.mp4" preload="auto" loop="true" playsinline muted crossorigin="anonymous"></video>
@@ -43,7 +43,9 @@
 
       <!-- OBJETIVO 1: Se activa con la 1ª imagen del compilador (index 0) -->
       
-        <a-video src="#video1" width="1" height="1.5" position="0 0 0" rotation="0 0 0"></a-video>
+        <a-plane color="red" opaciy="0.6" width="1" height="1.5" position="0 0 0"></a-plane>
+        <!-- Tu video encima -->
+        <a-video src="#video1" width="1" height="1.5" position="0 0 0.01"></a-video>
       
 
       <!-- OBJETIVO 2: Se activa con la 2ª imagen del compilador (index 1) -->
