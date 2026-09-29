@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Librerías de Realidad Aumentada (vía CDN público, sin instalaciones) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RA - Realidad Aumentada</title>
+    
     <script src="https://aframe.io"></script>
     <script src="https://jsdelivr.net"></script>
+    
     <style>
-      /* Oculta botones innecesarios de VR en iOS */
-      .a-enter-vr { display: none; }
+      body { margin: 0; overflow: hidden; }
+      .a-enter-vr { display: none !important; }
     </style>
   </head>
   <body>
 
-    <!-- Escena configurada con tu archivo de rastreo -->
+    <!-- Escena configurada con el archivo de rastreo -->
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
-        <!-- playsinline y muted permiten que iOS reproduzca los videos automáticamente -->
         <video id="video1" src="./lado_claro_2.mp4" preload="auto" loop="true" playsinline muted crossorigin="anonymous"></video>
         <video id="video2" src="./lado_oscuro.mp4" preload="auto" loop="true" playsinline muted crossorigin="anonymous"></video>
         <video id="video3" src="./lado_oscuro_2.mp4" preload="auto" loop="true" playsinline muted crossorigin="anonymous"></video>
@@ -24,24 +26,25 @@
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- OBJETIVO 1: Muestra el video 1 sobre la primera imagen (index 0) -->
+      <!-- OBJETIVO 1: Se activa con la 1ª imagen del compilador (index 0) -->
       
         <a-video src="#video1" width="1" height="0.56" position="0 0 0"></a-video>
       
 
-      <!-- OBJETIVO 2: Muestra el video 2 sobre la segunda imagen (index 1) -->
+      <!-- OBJETIVO 2: Se activa con la 2ª imagen del compilador (index 1) -->
       
         <a-video src="#video2" width="1" height="0.56" position="0 0 0"></a-video>
       
 
-      <!-- OBJETIVO 3: Muestra el video 3 sobre la tercera imagen (index 2) -->
+      <!-- OBJETIVO 3: Se activa con la 3ª imagen del compilador (index 2) -->
       
-        <a-video src="#video3" width="1" height="0.56" position="0 0 0"></a-video>
+        <a-video src="#video3" width="1" height="0.56" position="0 0 0">
       
 
-      <!-- OBJETIVO 4: Muestra el video 4 sobre la cuarta imagen (index 3) -->
+      <!-- OBJETIVO 4: Se activa con la 4ª imagen del compilador (index 3) -->
       
         <a-video src="#video4" width="1" height="0.56" position="0 0 0"></a-video>
+      
       
     </a-scene>
 
@@ -52,8 +55,13 @@
         const video = document.querySelector(videoId);
         
         if (target && video) {
-          target.addEventListener("targetFound", () => video.play());
-          target.addEventListener("targetLost", () => video.pause());
+          target.addEventListener("targetFound", () => {
+            console.log("Detectado:", targetId);
+            video.play().catch(err => console.log("Error de autoplay:", err));
+          });
+          target.addEventListener("targetLost", () => {
+            video.pause();
+          });
         }
       };
 
