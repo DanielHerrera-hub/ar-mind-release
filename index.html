@@ -9,11 +9,26 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-      body { margin: 0; overflow: hidden; }
+      body { margin: 0; overflow: hidden; font-family: sans-serif; }
       .a-enter-vr { display: none !important; }
+      
+      /* Pantalla flotante de inicio obligatoria para iOS y PC */
+      #ui-inicio {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85); display: flex; flex-direction: column;
+        justify-content: center; align-items: center; z-index: 9999; color: white;
+      }
+      #btn-comenzar {
+        padding: 15px 30px; font-size: 18px; border: none; background: #00bcd4;
+        color: white; border-radius: 25px; cursor: pointer; font-weight: bold;
+      }
     </style>
   </head>
   <body>
+    <div id="ui-inicio">
+      <h2>Experiencia de Realidad Aumentada</h2>
+      <button id="btn-comenzar">Comenzar Experiencia</button>
+    </div>
 
     <!-- Escena configurada con el archivo de rastreo -->
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
@@ -28,48 +43,69 @@
 
       <!-- OBJETIVO 1: Se activa con la 1ª imagen del compilador (index 0) -->
       
-        <a-video src="#video1" width="1" height="0.56" position="0 0 0"></a-video>
+        <a-video src="#video1" width="1" height="1.5" position="0 0 0" rotation="0 0 0"></a-video>
       
 
       <!-- OBJETIVO 2: Se activa con la 2ª imagen del compilador (index 1) -->
       
-        <a-video src="#video2" width="1" height="0.56" position="0 0 0"></a-video>
+        <a-video src="#video2" width="1" height="1.5" position="0 0 0" rotation="0 0 0"></a-video>
       
 
       <!-- OBJETIVO 3: Se activa con la 3ª imagen del compilador (index 2) -->
       
-        <a-video src="#video3" width="1" height="0.56" position="0 0 0">
+        <a-video src="#video3" width="1" height="1.5" position="0 0 0" rotation="0 0 0"></a-video>
       
 
       <!-- OBJETIVO 4: Se activa con la 4ª imagen del compilador (index 3) -->
       
-        <a-video src="#video4" width="1" height="0.56" position="0 0 0"></a-video>
+        <a-video src="#video4" width="1" height="1.5" position="0 0 0" rotation="0 0 0"></a-video>
       
       
     </a-scene>
 
     <script>
-      // Control de reproducción automática (Play al detectar, Pause al perder de vista)
-      const registrarControlVideo = (targetId, videoId) => {
+      const btnComenzar = document.querySelector('#btn-comenzar');
+      const uiInicio = document.querySelector('#ui-inicio');
+      
+      const v1 = document.querySelector('#video1');
+      const v2 = document.querySelector('#video2');
+      const v3 = document.querySelector('#video3');
+      const v4 = document.querySelector('#video4');
+
+      // Al hacer clic, Safari y Chrome liberan la memoria de los 4 videos
+      btnComenzar.addEventListener('click', () => {
+        uiInicio.style.display = 'none';
+        
+        // Carga y pausa rápida para "despertar" los videos en el iPad
+        [v1, v2, v3, v4].forEach(video => {
+          if (video) {
+            video.play().then(() => video.pause()).catch(e => console.log(e));
+          }
+        });
+      });
+
+      // Lógica de automatización para reproducir cuando se detecta y pausar al perder de vista
+      const vincularVideo = (targetId, videoId) => {
         const target = document.querySelector(targetId);
         const video = document.querySelector(videoId);
         
         if (target && video) {
           target.addEventListener("targetFound", () => {
-            console.log("Detectado:", targetId);
-            video.play().catch(err => console.log("Error de autoplay:", err));
+            console.log("¡Target detectado! Reproduciendo:", videoId);
+            video.play().catch(err => console.log("Error de reproducción:", err));
           });
           target.addEventListener("targetLost", () => {
+            console.log("Target perdido");
             video.pause();
           });
         }
       };
 
-      // Inicializamos el comportamiento individual para los 4 objetivos independientes
-      registrarControlVideo('#target1', '#video1');
-      registrarControlVideo('#target2', '#video2');
-      registrarControlVideo('#target3', '#video3');
-      registrarControlVideo('#target4', '#video4');
+      // Inicialización de los controladores
+      vincularVideo('#target1', '#video1');
+      vincularVideo('#target2', '#video2');
+      vincularVideo('#target3', '#video3');
+      vincularVideo('#target4', '#video4');
     </script>
   </body>
 </html>
